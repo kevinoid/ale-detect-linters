@@ -1,21 +1,21 @@
-if exists('g:loaded_syntastic_detect_typescript_autoload')
+if exists('g:loaded_ale_detect_typescript')
     finish
 endif
 
-let g:loaded_syntastic_detect_typescript_autoload = 1
+let g:loaded_ale_detect_typescript = 1
 
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
-" Gets a list of names of checkers which are likely to apply to the typescript
+" Gets a list of names of linters which are likely to apply to the typescript
 " file in the current buffer, based on its contents and path.
-function! syntastic#detect#typescript#detectAll() abort " {{{
-    let typescript_checkers = []
+function! ale#detect#typescript#detectAll() abort
+    let typescript_linters = []
 
     let save_suffixesadd = &suffixesadd
     let &suffixesadd = ''
 
-    " Load nearest package.json, which is relevant to several checkers
+    " Load nearest package.json, which is relevant to several linters
     let package_json = findfile('package.json', '.;')
 
     if package_json isnot# ''
@@ -25,7 +25,7 @@ function! syntastic#detect#typescript#detectAll() abort " {{{
     if stridx(package_json, '"typescript-eslint-parser":') != -1
         \ || stridx(package_json, '"@typescript-eslint/parser":') != -1
         \ || search('\m/[*/]\s*eslint-', 'cnw')
-        call add(typescript_checkers, 'eslint')
+        call add(typescript_linters, 'eslint')
     else
         let &suffixesadd = '.js,.yaml,.yml,.json'
         let eslintrc = findfile('.eslintrc', '.;')
@@ -33,7 +33,7 @@ function! syntastic#detect#typescript#detectAll() abort " {{{
         if eslintrc isnot# ''
             for line in readfile(eslintrc)
                 if stridx(line, '"typescript"') != -1
-                    call add(typescript_checkers, 'eslint')
+                    call add(typescript_linters, 'eslint')
                     break
                 endif
             endfor
@@ -42,30 +42,23 @@ function! syntastic#detect#typescript#detectAll() abort " {{{
         let &suffixesadd = ''
     endif
 
-    if stridx(package_json, '"lynt":') != -1
-        \ || findfile('.lyntrc', '.;') isnot# ''
-        call add(typescript_checkers, 'lynt')
-    endif
-
     if stridx(package_json, '"tslintConfig":') != -1
         \ || stridx(package_json, '"tslint":') != -1
         \ || findfile('tslint.json', '.;') isnot# ''
         \ || findfile('tslint.yaml', '.;') isnot# ''
-        call add(typescript_checkers, 'tslint')
+        call add(typescript_linters, 'tslint')
     endif
 
-    " tsuquyomi is always applicable when present
-    call add(typescript_checkers, 'tsuquyomi')
+    " tsserver is always applicable
+    call add(typescript_linters, 'tsserver')
+
+    " typecheck is always applicable
+    call add(typescript_linters, 'typecheck')
 
     let &suffixesadd = save_suffixesadd
 
-    call syntastic#log#debug(
-        \ g:_SYNTASTIC_DEBUG_CHECKERS,
-        \ 'syntastic#detect#typescript#detectAll: Detected checkers: '
-        \ . join(typescript_checkers))
-
-    return typescript_checkers
-endfunction " }}}
+    return typescript_linters
+endfunction
 
 let &cpoptions = s:save_cpoptions
 unlet s:save_cpoptions
