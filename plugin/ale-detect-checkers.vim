@@ -1,7 +1,7 @@
 " Checker detection for ALE
 " Maintainer:   Kevin Locke <kevin@kevinlocke.name>
 " Repository:   https://github.com/kevinoid/ale-detect-linters
-" License:      Vim License  (see vim's :help license)
+" License:      2-Clause BSD
 " Last Change:  1 February 2019
 
 if exists('g:loaded_ale_detect_linters')
