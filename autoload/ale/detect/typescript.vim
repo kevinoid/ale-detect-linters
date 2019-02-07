@@ -8,16 +8,17 @@ let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
 " Gets a list of names of linters which are likely to apply to the typescript
-" file in the current buffer, based on its contents and path.
-function! ale#detect#typescript#detectAll() abort
+" file in a given buffer, based on its contents and path.
+function! ale#detect#typescript#detectAll(buffer) abort
     let l:typescript_linters = []
 
     let l:save_suffixesadd = &suffixesadd
     let &suffixesadd = ''
 
     " Load nearest package.json, which is relevant to several linters
+    let l:bufpath = expand('#' . a:buffer . ':p:h') . ';'
     let l:package_json =
-    \   join(ale#detect#_utils#tryFindAndRead('package.json', '.;'), '')
+    \   join(ale#detect#_utils#tryFindAndRead('package.json', l:bufpath), '')
 
     if stridx(l:package_json, '"typescript-eslint-parser":') != -1
         \ || stridx(l:package_json, '"@typescript-eslint/parser":') != -1
@@ -26,7 +27,7 @@ function! ale#detect#typescript#detectAll() abort
     else
         let &suffixesadd = '.js,.yaml,.yml,.json'
 
-        for line in ale#detect#_utils#tryFindAndRead('.eslintrc', '.;')
+        for line in ale#detect#_utils#tryFindAndRead('.eslintrc', l:bufpath)
             if stridx(line, '"typescript"') != -1
                 call add(l:typescript_linters, 'eslint')
                 break
@@ -38,8 +39,8 @@ function! ale#detect#typescript#detectAll() abort
 
     if stridx(l:package_json, '"tslintConfig":') != -1
         \ || stridx(l:package_json, '"tslint":') != -1
-        \ || findfile('tslint.json', '.;') isnot# ''
-        \ || findfile('tslint.yaml', '.;') isnot# ''
+        \ || findfile('tslint.json', l:bufpath) isnot# ''
+        \ || findfile('tslint.yaml', l:bufpath) isnot# ''
         call add(l:typescript_linters, 'tslint')
     endif
 

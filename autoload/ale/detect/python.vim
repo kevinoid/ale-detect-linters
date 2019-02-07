@@ -8,30 +8,32 @@ let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
 " Gets a Dictionary of module names from requirements.txt and Pipfile
-function! s:LoadDependencies() abort
+function! s:LoadDependencies(buffer) abort
+    let l:bufpath = expand('#' . a:buffer . ':p:h') . ';'
+
     let l:requirements_txt =
-    \   ale#detect#_utils#tryFindAndRead('requirements.txt', '.;')
+    \   ale#detect#_utils#tryFindAndRead('requirements.txt', l:bufpath)
 
     let l:requirements_dev_txt =
-    \   ale#detect#_utils#tryFindAndRead('requirements-dev.txt', '.;')
+    \   ale#detect#_utils#tryFindAndRead('requirements-dev.txt', l:bufpath)
 
     if empty(l:requirements_dev_txt)
         let l:requirements_dev_txt =
-        \   ale#detect#_utils#tryFindAndRead('dev-requirements.txt', '.;')
+        \   ale#detect#_utils#tryFindAndRead('dev-requirements.txt', l:bufpath)
     endif
 
     let l:requirements_test_txt =
-    \   ale#detect#_utils#tryFindAndRead('requirements-test.txt', '.;')
+    \   ale#detect#_utils#tryFindAndRead('requirements-test.txt', l:bufpath)
 
     if empty(l:requirements_test_txt)
         let l:requirements_test_txt =
-        \   ale#detect#_utils#tryFindAndRead('test-requirements.txt', '.;')
+        \   ale#detect#_utils#tryFindAndRead('test-requirements.txt', l:bufpath)
     endif
 
     let l:pipfile = []
     let l:in_packages = 0
 
-    for l:line in ale#detect#_utils#tryFindAndRead('Pipfile', '.;')
+    for l:line in ale#detect#_utils#tryFindAndRead('Pipfile', l:bufpath)
         if l:line =~# '\m\s*[packages]' || l:line =~# '\m\s*[dev-packages]'
             let l:in_packages = 1
         elseif l:line[0] =~# '\m\s*['
@@ -63,22 +65,23 @@ function! s:LoadDependencies() abort
 endfunction
 
 " Gets a list of names of linters which are likely to apply to the python
-" file in the current buffer, based on its contents and path.
-function! ale#detect#python#detectAll() abort
+" file in a given buffer, based on its contents and path.
+function! ale#detect#python#detectAll(buffer) abort
     let l:python_linters = []
 
     let l:save_suffixesadd = &suffixesadd
     let &suffixesadd = ''
 
     " Load files which can be used by multiple linters
-    let l:pytest_ini = ale#detect#_utils#tryFindAndRead('pytest.ini', '.;')
-    let l:setup_cfg = ale#detect#_utils#tryFindAndRead('setup.cfg', '.;')
-    let l:tox_ini = ale#detect#_utils#tryFindAndRead('tox.ini', '.;')
+    let l:bufpath = expand('#' . a:buffer . ':p:h') . ';'
+    let l:pytest_ini = ale#detect#_utils#tryFindAndRead('pytest.ini', l:bufpath)
+    let l:setup_cfg = ale#detect#_utils#tryFindAndRead('setup.cfg', l:bufpath)
+    let l:tox_ini = ale#detect#_utils#tryFindAndRead('tox.ini', l:bufpath)
 
-    let l:dependencies = s:LoadDependencies()
+    let l:dependencies = s:LoadDependencies(a:buffer)
 
     if has_key(l:dependencies, 'bandit')
-        \ || findfile('.bandit', '.;') isnot# ''
+        \ || findfile('.bandit', l:bufpath) isnot# ''
         call add(l:python_linters, 'bandit')
     endif
 
@@ -86,27 +89,27 @@ function! ale#detect#python#detectAll() abort
         \ || l:setup_cfg =~# '\v%(^|\n)\s*\[flake8\]'
         \ || l:tox_ini =~# '\v%(^|\n)\s*\[flake8\]'
         \ || search('\m#\s*flake8:', 'cnw')
-        \ || findfile('.flake8', '.;') isnot# ''
+        \ || findfile('.flake8', l:bufpath) isnot# ''
         call add(l:python_linters, 'flake8')
     endif
 
     if has_key(l:dependencies, 'mypy')
         \ || l:setup_cfg =~# '\v%(^|\n)\s*\[mypy\]'
-        \ || findfile('mypy.ini', '.;') isnot# ''
+        \ || findfile('mypy.ini', l:bufpath) isnot# ''
         call add(l:python_linters, 'mypy')
     endif
 
     if has_key(l:dependencies, 'prospector')
-        \ || finddir('.prospector', '.;') isnot# ''
-        \ || finddir('prospector', '.;') isnot# ''
-        \ || findfile('.landscape.yml', '.;') isnot# ''
-        \ || findfile('.landscape.yaml', '.;') isnot# ''
-        \ || findfile('landscape.yml', '.;') isnot# ''
-        \ || findfile('landscape.yaml', '.;') isnot# ''
-        \ || findfile('.prospector.yaml', '.;') isnot# ''
-        \ || findfile('.prospector.yml', '.;') isnot# ''
-        \ || findfile('prospector.yaml', '.;') isnot# ''
-        \ || findfile('prospector.yml', '.;') isnot# ''
+        \ || finddir('.prospector', l:bufpath) isnot# ''
+        \ || finddir('prospector', l:bufpath) isnot# ''
+        \ || findfile('.landscape.yml', l:bufpath) isnot# ''
+        \ || findfile('.landscape.yaml', l:bufpath) isnot# ''
+        \ || findfile('landscape.yml', l:bufpath) isnot# ''
+        \ || findfile('landscape.yaml', l:bufpath) isnot# ''
+        \ || findfile('.prospector.yaml', l:bufpath) isnot# ''
+        \ || findfile('.prospector.yml', l:bufpath) isnot# ''
+        \ || findfile('prospector.yaml', l:bufpath) isnot# ''
+        \ || findfile('prospector.yml', l:bufpath) isnot# ''
         call add(l:python_linters, 'prospector')
     endif
 
@@ -115,11 +118,11 @@ function! ale#detect#python#detectAll() abort
         \ || l:setup_cfg =~# '\v%(^|\n)\s*\[pep257\]'
         \ || l:tox_ini =~# '\v%(^|\n)\s*\[pydocstyle\]'
         \ || l:tox_ini =~# '\v%(^|\n)\s*\[pep257\]'
-        \ || findfile('.pydocstyle', '.;') isnot# ''
-        \ || findfile('.pydocstyle.ini', '.;') isnot# ''
-        \ || findfile('.pydocstylerc', '.;') isnot# ''
-        \ || findfile('.pydocstylerc.ini', '.;') isnot# ''
-        \ || findfile('.pep257', '.;') isnot# ''
+        \ || findfile('.pydocstyle', l:bufpath) isnot# ''
+        \ || findfile('.pydocstyle.ini', l:bufpath) isnot# ''
+        \ || findfile('.pydocstylerc', l:bufpath) isnot# ''
+        \ || findfile('.pydocstylerc.ini', l:bufpath) isnot# ''
+        \ || findfile('.pep257', l:bufpath) isnot# ''
         call add(l:python_linters, 'pydocstyle')
     endif
 
@@ -132,14 +135,14 @@ function! ale#detect#python#detectAll() abort
         \ || l:setup_cfg =~# '\v%(^|\n)\s*\[pylama(:[^]]+)?\]'
         \ || l:tox_ini =~# '\v%(^|\n)\s*\[pylama(:[^]]+)?\]'
         \ || search('\m#\s*pylama:', 'cnw')
-        \ || findfile('pylama.ini', '.;') isnot# ''
+        \ || findfile('pylama.ini', l:bufpath) isnot# ''
         call add(l:python_linters, 'pylama')
     endif
 
     if has_key(l:dependencies, 'pylint')
         \ || search('\m#\s*pylint:', 'cnw')
-        \ || findfile('pylintrc', '.;') isnot# ''
-        \ || findfile('.pylintrc', '.;') isnot# ''
+        \ || findfile('pylintrc', l:bufpath) isnot# ''
+        \ || findfile('.pylintrc', l:bufpath) isnot# ''
         call add(l:python_linters, 'pylint')
     endif
 
@@ -147,7 +150,7 @@ function! ale#detect#python#detectAll() abort
     call add(l:python_linters, 'pyls')
 
     if has_key(l:dependencies, 'pyre-check')
-        \ || findfile('.pyre_configuration', '.;') isnot# ''
+        \ || findfile('.pyre_configuration', l:bufpath) isnot# ''
         call add(l:python_linters, 'pyre')
     endif
 

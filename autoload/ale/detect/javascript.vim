@@ -8,16 +8,17 @@ let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
 " Gets a list of names of linters which are likely to apply to the javascript
-" file in the current buffer, based on its contents and path.
-function! ale#detect#javascript#detectAll() abort
+" file in a given buffer, based on its contents and path.
+function! ale#detect#javascript#detectAll(buffer) abort
     let l:javascript_linters = []
 
     let l:save_suffixesadd = &suffixesadd
     let &suffixesadd = ''
 
     " Load nearest package.json, which is relevant to several linters
+    let l:bufpath = expand('#' . a:buffer . ':p:h') . ';'
     let l:package_json =
-    \   join(ale#detect#_utils#tryFindAndRead('package.json', '.;'), '')
+    \   join(ale#detect#_utils#tryFindAndRead('package.json', l:bufpath), '')
 
     if stridx(l:package_json, '"eslint":') != -1
         \ || stridx(l:package_json, '"eslintConfig":') != -1
@@ -26,7 +27,7 @@ function! ale#detect#javascript#detectAll() abort
     else
         let &suffixesadd = '.js,.yaml,.yml,.json'
 
-        if findfile('.eslintrc', '.;') isnot# ''
+        if findfile('.eslintrc', l:bufpath) isnot# ''
             call add(l:javascript_linters, 'eslint')
         endif
 
@@ -39,15 +40,15 @@ function! ale#detect#javascript#detectAll() abort
     endif
 
     if stridx(l:package_json, '"jscsConfig":') != -1
-        \ || findfile('.jscsrc', '.;') isnot# ''
-        \ || findfile('.jscs.json', '.;') isnot# ''
-        \ || findfile('.jscs.yaml', '.;') isnot# ''
+        \ || findfile('.jscsrc', l:bufpath) isnot# ''
+        \ || findfile('.jscs.json', l:bufpath) isnot# ''
+        \ || findfile('.jscs.yaml', l:bufpath) isnot# ''
         let b:ale_linters = ['jscs']
     endif
 
     if stridx(l:package_json, '"jshintConfig":') != -1
         \ || search('\m/\*\s*jshint\>', 'cnw')
-        \ || findfile('.jshintrc', '.;') isnot# ''
+        \ || findfile('.jshintrc', l:bufpath) isnot# ''
         call add(l:javascript_linters, 'jshint')
     endif
 

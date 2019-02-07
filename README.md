@@ -48,7 +48,7 @@ The rules are hard coded in per-language
 
 To customize the behavior of this plugin, users can `set
 g:ale_detect_linters = 0` to disable `autocmd` registration, then `let
-b:ale_linters = ale#detect#<language>#detectAll()` with any
+b:ale_linters = ale#detect#<language>#detectAll(bufnr(''))` with any
 desired modifications.
 
 
