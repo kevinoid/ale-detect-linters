@@ -34,7 +34,7 @@ function! s:LoadDependencies(buffer) abort
     let l:in_packages = 0
 
     for l:line in ale#detect#_utils#tryFindAndRead('Pipfile', l:bufpath)
-        if l:line =~# '\m\s*[packages]' || l:line =~# '\m\s*[dev-packages]'
+        if l:line =~# '\m\s*\[packages\]' || l:line =~# '\m\s*\[dev-packages\]'
             let l:in_packages = 1
         elseif l:line[0] =~# '\m\s*['
             let l:in_packages = 0
