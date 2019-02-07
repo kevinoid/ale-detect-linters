@@ -16,11 +16,8 @@ function! ale#detect#typescript#detectAll() abort
     let &suffixesadd = ''
 
     " Load nearest package.json, which is relevant to several linters
-    let l:package_json = findfile('package.json', '.;')
-
-    if l:package_json isnot# ''
-        let l:package_json = join(readfile(l:package_json))
-    endif
+    let l:package_json =
+    \   join(ale#detect#_utils#tryFindAndRead('package.json', '.;'), '')
 
     if stridx(l:package_json, '"typescript-eslint-parser":') != -1
         \ || stridx(l:package_json, '"@typescript-eslint/parser":') != -1
@@ -28,16 +25,13 @@ function! ale#detect#typescript#detectAll() abort
         call add(l:typescript_linters, 'eslint')
     else
         let &suffixesadd = '.js,.yaml,.yml,.json'
-        let l:eslintrc = findfile('.eslintrc', '.;')
 
-        if l:eslintrc isnot# ''
-            for line in readfile(l:eslintrc)
-                if stridx(line, '"typescript"') != -1
-                    call add(l:typescript_linters, 'eslint')
-                    break
-                endif
-            endfor
-        endif
+        for line in ale#detect#_utils#tryFindAndRead('.eslintrc', '.;')
+            if stridx(line, '"typescript"') != -1
+                call add(l:typescript_linters, 'eslint')
+                break
+            endif
+        endfor
 
         let &suffixesadd = ''
     endif

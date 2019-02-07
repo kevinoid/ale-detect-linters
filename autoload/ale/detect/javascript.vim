@@ -16,11 +16,8 @@ function! ale#detect#javascript#detectAll() abort
     let &suffixesadd = ''
 
     " Load nearest package.json, which is relevant to several linters
-    let l:package_json = findfile('package.json', '.;')
-
-    if l:package_json isnot# ''
-        let l:package_json = join(readfile(l:package_json))
-    endif
+    let l:package_json =
+    \   join(ale#detect#_utils#tryFindAndRead('package.json', '.;'), '')
 
     if stridx(l:package_json, '"eslint":') != -1
         \ || stridx(l:package_json, '"eslintConfig":') != -1
