@@ -55,7 +55,7 @@ function! s:LoadDependencies(buffer) abort
         if l:line[0] isnot# ''
             \ && l:line[0] isnot# '-'
             \ && l:line[0] isnot# '#'
-            let l:parts = split(l:line, '[<>=!\s]\+')
+            let l:parts = split(l:line, '\m[<>=!\s]\+')
             let l:package = l:parts[0]
             let l:dependencies[l:package] = 1
         endif
