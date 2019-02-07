@@ -19,6 +19,8 @@ if get(g:, 'ale_detect_linters', 1)
 
         autocmd FileType javascript let b:ale_linters =
             \ ale#detect#javascript#detectAll()
+        autocmd FileType python let b:ale_linters =
+            \ ale#detect#python#detectAll()
         autocmd FileType typescript let b:ale_linters =
             \ ale#detect#typescript#detectAll()
     augroup END
