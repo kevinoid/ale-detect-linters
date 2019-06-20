@@ -74,9 +74,12 @@ function! ale#detect#python#detectAll(buffer) abort
 
     " Load files which can be used by multiple linters
     let l:bufpath = expand('#' . a:buffer . ':p:h') . ';'
-    let l:pytest_ini = ale#detect#_utils#tryFindAndRead('pytest.ini', l:bufpath)
-    let l:setup_cfg = ale#detect#_utils#tryFindAndRead('setup.cfg', l:bufpath)
-    let l:tox_ini = ale#detect#_utils#tryFindAndRead('tox.ini', l:bufpath)
+    let l:pytest_ini =
+    \ join(ale#detect#_utils#tryFindAndRead('pytest.ini', l:bufpath), "\n")
+    let l:setup_cfg =
+    \ join(ale#detect#_utils#tryFindAndRead('setup.cfg', l:bufpath), "\n")
+    let l:tox_ini =
+    \ join(ale#detect#_utils#tryFindAndRead('tox.ini', l:bufpath), "\n")
 
     let l:dependencies = s:LoadDependencies(a:buffer)
 
