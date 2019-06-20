@@ -21,8 +21,8 @@ function! ale#detect#typescript#detectAll(buffer) abort
     \   join(ale#detect#_utils#tryFindAndRead('package.json', l:bufpath), '')
 
     if stridx(l:package_json, '"typescript-eslint-parser":') != -1
-        \ || stridx(l:package_json, '"@typescript-eslint/parser":') != -1
-        \ || search('\m/[*/]\s*eslint-', 'cnw')
+    \ || stridx(l:package_json, '"@typescript-eslint/parser":') != -1
+    \ || search('\m/[*/]\s*eslint-', 'cnw')
         call add(l:typescript_linters, 'eslint')
     else
         let &suffixesadd = '.js,.yaml,.yml,.json'
@@ -38,9 +38,9 @@ function! ale#detect#typescript#detectAll(buffer) abort
     endif
 
     if stridx(l:package_json, '"tslintConfig":') != -1
-        \ || stridx(l:package_json, '"tslint":') != -1
-        \ || findfile('tslint.json', l:bufpath) isnot# ''
-        \ || findfile('tslint.yaml', l:bufpath) isnot# ''
+    \ || stridx(l:package_json, '"tslint":') != -1
+    \ || findfile('tslint.json', l:bufpath) isnot# ''
+    \ || findfile('tslint.yaml', l:bufpath) isnot# ''
         call add(l:typescript_linters, 'tslint')
     endif
 

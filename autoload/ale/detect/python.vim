@@ -46,15 +46,15 @@ function! s:LoadDependencies(buffer) abort
     let l:dependencies = {}
 
     for l:line in l:requirements_txt
-                \ + l:requirements_dev_txt
-                \ + l:requirements_test_txt
-                \ + l:pipfile
+    \ + l:requirements_dev_txt
+    \ + l:requirements_test_txt
+    \ + l:pipfile
         let l:line = trim(l:line)
 
         " Ignore blank lines, options, and comments
         if l:line[0] isnot# ''
-            \ && l:line[0] isnot# '-'
-            \ && l:line[0] isnot# '#'
+        \ && l:line[0] isnot# '-'
+        \ && l:line[0] isnot# '#'
             let l:parts = split(l:line, '\m[<>=!\s]\+')
             let l:package = l:parts[0]
             let l:dependencies[l:package] = 1
@@ -84,48 +84,48 @@ function! ale#detect#python#detectAll(buffer) abort
     let l:dependencies = s:LoadDependencies(a:buffer)
 
     if has_key(l:dependencies, 'bandit')
-        \ || findfile('.bandit', l:bufpath) isnot# ''
+    \ || findfile('.bandit', l:bufpath) isnot# ''
         call add(l:python_linters, 'bandit')
     endif
 
     if has_key(l:dependencies, 'flake8')
-        \ || l:setup_cfg =~# '\v%(^|\n)\s*\[flake8\]'
-        \ || l:tox_ini =~# '\v%(^|\n)\s*\[flake8\]'
-        \ || search('\m#\s*flake8:', 'cnw')
-        \ || findfile('.flake8', l:bufpath) isnot# ''
+    \ || l:setup_cfg =~# '\v%(^|\n)\s*\[flake8\]'
+    \ || l:tox_ini =~# '\v%(^|\n)\s*\[flake8\]'
+    \ || search('\m#\s*flake8:', 'cnw')
+    \ || findfile('.flake8', l:bufpath) isnot# ''
         call add(l:python_linters, 'flake8')
     endif
 
     if has_key(l:dependencies, 'mypy')
-        \ || l:setup_cfg =~# '\v%(^|\n)\s*\[mypy\]'
-        \ || findfile('mypy.ini', l:bufpath) isnot# ''
+    \ || l:setup_cfg =~# '\v%(^|\n)\s*\[mypy\]'
+    \ || findfile('mypy.ini', l:bufpath) isnot# ''
         call add(l:python_linters, 'mypy')
     endif
 
     if has_key(l:dependencies, 'prospector')
-        \ || finddir('.prospector', l:bufpath) isnot# ''
-        \ || finddir('prospector', l:bufpath) isnot# ''
-        \ || findfile('.landscape.yml', l:bufpath) isnot# ''
-        \ || findfile('.landscape.yaml', l:bufpath) isnot# ''
-        \ || findfile('landscape.yml', l:bufpath) isnot# ''
-        \ || findfile('landscape.yaml', l:bufpath) isnot# ''
-        \ || findfile('.prospector.yaml', l:bufpath) isnot# ''
-        \ || findfile('.prospector.yml', l:bufpath) isnot# ''
-        \ || findfile('prospector.yaml', l:bufpath) isnot# ''
-        \ || findfile('prospector.yml', l:bufpath) isnot# ''
+    \ || finddir('.prospector', l:bufpath) isnot# ''
+    \ || finddir('prospector', l:bufpath) isnot# ''
+    \ || findfile('.landscape.yml', l:bufpath) isnot# ''
+    \ || findfile('.landscape.yaml', l:bufpath) isnot# ''
+    \ || findfile('landscape.yml', l:bufpath) isnot# ''
+    \ || findfile('landscape.yaml', l:bufpath) isnot# ''
+    \ || findfile('.prospector.yaml', l:bufpath) isnot# ''
+    \ || findfile('.prospector.yml', l:bufpath) isnot# ''
+    \ || findfile('prospector.yaml', l:bufpath) isnot# ''
+    \ || findfile('prospector.yml', l:bufpath) isnot# ''
         call add(l:python_linters, 'prospector')
     endif
 
     if has_key(l:dependencies, 'pydocstyle')
-        \ || l:setup_cfg =~# '\v%(^|\n)\s*\[pydocstyle\]'
-        \ || l:setup_cfg =~# '\v%(^|\n)\s*\[pep257\]'
-        \ || l:tox_ini =~# '\v%(^|\n)\s*\[pydocstyle\]'
-        \ || l:tox_ini =~# '\v%(^|\n)\s*\[pep257\]'
-        \ || findfile('.pydocstyle', l:bufpath) isnot# ''
-        \ || findfile('.pydocstyle.ini', l:bufpath) isnot# ''
-        \ || findfile('.pydocstylerc', l:bufpath) isnot# ''
-        \ || findfile('.pydocstylerc.ini', l:bufpath) isnot# ''
-        \ || findfile('.pep257', l:bufpath) isnot# ''
+    \ || l:setup_cfg =~# '\v%(^|\n)\s*\[pydocstyle\]'
+    \ || l:setup_cfg =~# '\v%(^|\n)\s*\[pep257\]'
+    \ || l:tox_ini =~# '\v%(^|\n)\s*\[pydocstyle\]'
+    \ || l:tox_ini =~# '\v%(^|\n)\s*\[pep257\]'
+    \ || findfile('.pydocstyle', l:bufpath) isnot# ''
+    \ || findfile('.pydocstyle.ini', l:bufpath) isnot# ''
+    \ || findfile('.pydocstylerc', l:bufpath) isnot# ''
+    \ || findfile('.pydocstylerc.ini', l:bufpath) isnot# ''
+    \ || findfile('.pep257', l:bufpath) isnot# ''
         call add(l:python_linters, 'pydocstyle')
     endif
 
@@ -134,18 +134,18 @@ function! ale#detect#python#detectAll(buffer) abort
     endif
 
     if has_key(l:dependencies, 'pylama')
-        \ || l:pytest_ini =~# '\v%(^|\n)\s*\[pylama(:[^]]+)?\]'
-        \ || l:setup_cfg =~# '\v%(^|\n)\s*\[pylama(:[^]]+)?\]'
-        \ || l:tox_ini =~# '\v%(^|\n)\s*\[pylama(:[^]]+)?\]'
-        \ || search('\m#\s*pylama:', 'cnw')
-        \ || findfile('pylama.ini', l:bufpath) isnot# ''
+    \ || l:pytest_ini =~# '\v%(^|\n)\s*\[pylama(:[^]]+)?\]'
+    \ || l:setup_cfg =~# '\v%(^|\n)\s*\[pylama(:[^]]+)?\]'
+    \ || l:tox_ini =~# '\v%(^|\n)\s*\[pylama(:[^]]+)?\]'
+    \ || search('\m#\s*pylama:', 'cnw')
+    \ || findfile('pylama.ini', l:bufpath) isnot# ''
         call add(l:python_linters, 'pylama')
     endif
 
     if has_key(l:dependencies, 'pylint')
-        \ || search('\m#\s*pylint:', 'cnw')
-        \ || findfile('pylintrc', l:bufpath) isnot# ''
-        \ || findfile('.pylintrc', l:bufpath) isnot# ''
+    \ || search('\m#\s*pylint:', 'cnw')
+    \ || findfile('pylintrc', l:bufpath) isnot# ''
+    \ || findfile('.pylintrc', l:bufpath) isnot# ''
         call add(l:python_linters, 'pylint')
     endif
 
@@ -153,7 +153,7 @@ function! ale#detect#python#detectAll(buffer) abort
     call add(l:python_linters, 'pyls')
 
     if has_key(l:dependencies, 'pyre-check')
-        \ || findfile('.pyre_configuration', l:bufpath) isnot# ''
+    \ || findfile('.pyre_configuration', l:bufpath) isnot# ''
         call add(l:python_linters, 'pyre')
     endif
 

@@ -21,8 +21,8 @@ function! ale#detect#javascript#detectAll(buffer) abort
     \   join(ale#detect#_utils#tryFindAndRead('package.json', l:bufpath), '')
 
     if stridx(l:package_json, '"eslint":') != -1
-        \ || stridx(l:package_json, '"eslintConfig":') != -1
-        \ || search('\m/[*/]\s*eslint-', 'cnw')
+    \ || stridx(l:package_json, '"eslintConfig":') != -1
+    \ || search('\m/[*/]\s*eslint-', 'cnw')
         call add(l:javascript_linters, 'eslint')
     else
         let &suffixesadd = '.js,.yaml,.yml,.json'
@@ -35,20 +35,20 @@ function! ale#detect#javascript#detectAll(buffer) abort
     endif
 
     if stridx(l:package_json, '"flow-bin":') != -1
-        \ || stridx(l:package_json, '"babel-preset-flow":') != -1
+    \ || stridx(l:package_json, '"babel-preset-flow":') != -1
         call add(l:javascript_linters, 'flow')
     endif
 
     if stridx(l:package_json, '"jscsConfig":') != -1
-        \ || findfile('.jscsrc', l:bufpath) isnot# ''
-        \ || findfile('.jscs.json', l:bufpath) isnot# ''
-        \ || findfile('.jscs.yaml', l:bufpath) isnot# ''
+    \ || findfile('.jscsrc', l:bufpath) isnot# ''
+    \ || findfile('.jscs.json', l:bufpath) isnot# ''
+    \ || findfile('.jscs.yaml', l:bufpath) isnot# ''
         let b:ale_linters = ['jscs']
     endif
 
     if stridx(l:package_json, '"jshintConfig":') != -1
-        \ || search('\m/\*\s*jshint\>', 'cnw')
-        \ || findfile('.jshintrc', l:bufpath) isnot# ''
+    \ || search('\m/\*\s*jshint\>', 'cnw')
+    \ || findfile('.jshintrc', l:bufpath) isnot# ''
         call add(l:javascript_linters, 'jshint')
     endif
 
