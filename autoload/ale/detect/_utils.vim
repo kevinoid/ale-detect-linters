@@ -14,8 +14,8 @@ function! ale#detect#_utils#tryFindAndRead(...) abort
     if l:found isnot# ''
         try
             return readfile(l:found)
-        catch /^E484:/
-            " File is not readable.  Fall through.
+        catch /:E484:/
+            " Can't open file.  Fall through.
         endtry
     endif
 
