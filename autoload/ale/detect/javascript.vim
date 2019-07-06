@@ -26,8 +26,11 @@ function! ale#detect#javascript#detectAll(buffer) abort
         call add(l:javascript_linters, 'eslint')
     else
         let &suffixesadd = '.js,.yaml,.yml,.json'
+        let l:eslintrc = findfile('.eslintrc', l:bufpath)
 
-        if findfile('.eslintrc', l:bufpath) isnot# ''
+        " Ignore "personal configuration" ~/.eslintrc which is not indicative
+        if eslintrc isnot# ''
+        \ && fnamemodify(l:eslintrc, ':~:r') isnot# '~/.eslintrc'
             call add(l:javascript_linters, 'eslint')
         endif
 
