@@ -1,4 +1,4 @@
-" Checker detection for ALE
+" Linter detection for ALE
 " Maintainer:   Kevin Locke <kevin@kevinlocke.name>
 " Repository:   https://github.com/kevinoid/ale-detect-linters
 " License:      2-Clause BSD
