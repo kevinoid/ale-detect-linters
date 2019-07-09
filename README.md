@@ -1,8 +1,8 @@
-Detect ALE Linters
+Detect ALE Checkers
 ==================
 
 A [Vim](https://www.vim.org/) plugin which extends [ALE (Asynchronous Lint
-Engine)](https://github.com/w0rp/ale) to detect which linters to use based on
+Engine)](https://github.com/w0rp/ale) to detect which checkers to use based on
 the presence of per-file and per-project linter settings.
 
 
@@ -13,20 +13,20 @@ After installing ALE, this plugin can be installed in the usual ways:
 ### Using [Vim Packages](https://vimhelp.org/repeat.txt.html#packages)
 
 ```sh
-git checkout https://github.com/kevinoid/ale-detect-linters.git ~/.vim/pack/git-plugins/start/ale-detect-linters
+git checkout https://github.com/kevinoid/ale-detect-checkers.git ~/.vim/pack/git-plugins/start/ale-detect-checkers
 ```
 
 ### Using [Pathogen](https://github.com/tpope/vim-pathogen)
 
 ```sh
-git checkout https://github.com/kevinoid/ale-detect-linters.git ~/.vim/bundles/ale-detect-linters
+git checkout https://github.com/kevinoid/ale-detect-checkers.git ~/.vim/bundle/ale-detect-checkers
 ```
 
 ### Using [Vundle](https://github.com/VundleVim/Vundle.vim)
 
 Add the following to `.vimrc`:
 ```vim
-Plugin 'kevinoid/ale-detect-linters'
+Plugin 'kevinoid/ale-detect-checkers'
 ```
 Then run `:PluginInstall`.
 
@@ -34,7 +34,7 @@ Then run `:PluginInstall`.
 
 Add the following to `.vimrc` between `plug#begin()` and `plug#end()`:
 ```vim
-Plug 'kevinoid/ale-detect-linters'
+Plug 'kevinoid/ale-detect-checkers'
 ```
 
 
