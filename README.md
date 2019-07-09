@@ -19,7 +19,7 @@ git checkout https://github.com/kevinoid/ale-detect-linters.git ~/.vim/pack/git-
 ### Using [Pathogen](https://github.com/tpope/vim-pathogen)
 
 ```sh
-git checkout https://github.com/kevinoid/ale-detect-linters.git ~/.vim/bundles/ale-detect-linters
+git checkout https://github.com/kevinoid/ale-detect-linters.git ~/.vim/bundle/ale-detect-linters
 ```
 
 ### Using [Vundle](https://github.com/VundleVim/Vundle.vim)
