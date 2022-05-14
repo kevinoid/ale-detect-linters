@@ -74,6 +74,8 @@ function! ale#detect#python#detectAll(buffer) abort
 
     " Load files which can be used by multiple linters
     let l:bufpath = expand('#' . a:buffer . ':p:h') . ';'
+    let l:pyproject_toml =
+    \ join(ale#detect#_utils#tryFindAndRead('pyproject.toml', l:bufpath), "\n")
     let l:pytest_ini =
     \ join(ale#detect#_utils#tryFindAndRead('pytest.ini', l:bufpath), "\n")
     let l:setup_cfg =
@@ -97,6 +99,8 @@ function! ale#detect#python#detectAll(buffer) abort
     endif
 
     if has_key(l:dependencies, 'mypy')
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*mypy\s*\]'
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\[\s*tool\s*\.\s*mypy\s*\.'
     \ || l:setup_cfg =~# '\v%(^|\n)\s*\[mypy\]'
     \ || findfile('mypy.ini', l:bufpath) isnot# ''
     \ || findfile('.mypy.ini', l:bufpath) isnot# ''
@@ -118,6 +122,7 @@ function! ale#detect#python#detectAll(buffer) abort
     endif
 
     if has_key(l:dependencies, 'pydocstyle')
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*pydocstyle\s*\]'
     \ || l:setup_cfg =~# '\v%(^|\n)\s*\[pydocstyle\]'
     \ || l:setup_cfg =~# '\v%(^|\n)\s*\[pep257\]'
     \ || l:tox_ini =~# '\v%(^|\n)\s*\[pydocstyle\]'
@@ -145,6 +150,7 @@ function! ale#detect#python#detectAll(buffer) abort
 
     if has_key(l:dependencies, 'pylint')
     \ || search('\m#\s*pylint:', 'cnw')
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*pylint\s*\.'
     \ || findfile('pylintrc', l:bufpath) isnot# ''
     \ || findfile('.pylintrc', l:bufpath) isnot# ''
         call add(l:python_linters, 'pylint')
