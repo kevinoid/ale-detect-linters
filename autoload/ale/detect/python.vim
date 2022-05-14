@@ -99,6 +99,7 @@ function! ale#detect#python#detectAll(buffer) abort
     if has_key(l:dependencies, 'mypy')
     \ || l:setup_cfg =~# '\v%(^|\n)\s*\[mypy\]'
     \ || findfile('mypy.ini', l:bufpath) isnot# ''
+    \ || findfile('.mypy.ini', l:bufpath) isnot# ''
         call add(l:python_linters, 'mypy')
     endif
 
