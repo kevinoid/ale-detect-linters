@@ -217,6 +217,13 @@ function! ale#detect#python#detectAll(buffer) abort
         call add(l:python_linters, 'pyright')
     endif
 
+    " https://github.com/dosisod/refurb?tab=readme-ov-file#configuring-refurb
+    if has_key(l:dependencies, 'refurb')
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*refurb\s*\]'
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\[\s*tool\s*\.\s*refurb\s*\.'
+        call add(l:python_linters, 'refurb')
+    endif
+
     " https://docs.astral.sh/ruff/configuration/
     if has_key(l:dependencies, 'ruff')
     \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*ruff\s*[\].]'
