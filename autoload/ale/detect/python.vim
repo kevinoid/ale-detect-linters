@@ -7,7 +7,8 @@ let g:loaded_ale_detect_python = 1
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
-" Gets a Dictionary of module names from requirements.txt and Pipfile
+" Gets a Dictionary of module names from requirements.txt, Pipfile, and
+" pyproject.toml
 function! s:LoadDependencies(buffer) abort
     let l:bufpath = expand('#' . a:buffer . ':p:h') . ';'
 
@@ -43,12 +44,48 @@ function! s:LoadDependencies(buffer) abort
         endif
     endfor
 
+    let l:pyproject = []
+    let l:in_deps = 0
+    let l:in_groups = 0
+
+    " FIXME: This is hacky and fragile.  Use or implement a TOML parser.
+    for l:line in ale#detect#_utils#tryFindAndRead('pyproject.toml', l:bufpath)
+        if l:line =~# '\m^\s*dependencies\s*='
+            let l:in_deps = 1
+        elseif l:line =~# '\m^\s*\[\s*project\s*\.\s*optional-dependencies\s*\]'
+        \ || l:line =~# '\m^\s*\[\s*dependency-groups\s*\]'
+            let l:in_groups = 1
+            continue
+        endif
+
+        if l:in_groups || l:in_deps
+            " Remove any comments
+            let l:line = substitute(l:line, '#.*', '', '')
+            " Remove group name
+            let l:line = substitute(l:line, '^\s*\(''[^'']*''\|"[^"]*"\|\S*\)\s*=\s*\[', '', '')
+            " Remove include-group
+            let l:line = substitute(l:line, '{\s*[''"]\?include-group[''"]\?\s*=[^}]*}', '', '')
+            " Add each single-quoted string to l:pyproject
+            call substitute(l:line, '''\([^'']*\)''', '\=add(l:pyproject, submatch(1))', 'g')
+            " Add each double-quoted string to l:pyproject
+            call substitute(l:line, '"\([^"]*\)"', '\=add(l:pyproject, submatch(1))', 'g')
+
+            " Check for end of dependencies array or group table
+            if l:in_deps && stridx(l:line, ']')
+                let l:in_deps = 0
+            elseif l:in_groups && l:line =~# '\m^\s*\['
+                let l:in_groups = 0
+            endif
+        endif
+    endfor
+
     let l:dependencies = {}
 
     for l:line in l:requirements_txt
     \ + l:requirements_dev_txt
     \ + l:requirements_test_txt
     \ + l:pipfile
+    \ + l:pyproject
         let l:line = trim(l:line)
 
         " Ignore blank lines, options, and comments
