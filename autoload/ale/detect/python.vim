@@ -202,6 +202,14 @@ function! ale#detect#python#detectAll(buffer) abort
         call add(l:python_linters, 'pyre')
     endif
 
+    " https://docs.astral.sh/ruff/configuration/
+    if has_key(l:dependencies, 'ruff')
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*ruff\s*[\].]'
+    \ || findfile('ruff.toml', l:bufpath) isnot# ''
+    \ || findfile('.ruff.toml', l:bufpath) isnot# ''
+        call add(l:python_linters, 'ruff')
+    endif
+
     if has_key(l:dependencies, 'vulture')
         call add(l:python_linters, 'vulture')
     endif
