@@ -209,6 +209,14 @@ function! ale#detect#python#detectAll(buffer) abort
         call add(l:python_linters, 'pyrefly')
     endif
 
+    " https://microsoft.github.io/pyright/#/configuration
+    if has_key(l:dependencies, 'pyright')
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*pyright\s*\]'
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\[\s*tool\s*\.\s*pyright\s*\.'
+    \ || findfile('pyrightconfig.json', l:bufpath) isnot# ''
+        call add(l:python_linters, 'pyright')
+    endif
+
     " https://docs.astral.sh/ruff/configuration/
     if has_key(l:dependencies, 'ruff')
     \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*ruff\s*[\].]'
