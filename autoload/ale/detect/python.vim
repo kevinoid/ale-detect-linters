@@ -123,6 +123,7 @@ function! ale#detect#python#detectAll(buffer) abort
     let l:dependencies = s:LoadDependencies(a:buffer)
 
     if has_key(l:dependencies, 'bandit')
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*bandit\s*[\].]'
     \ || findfile('.bandit', l:bufpath) isnot# ''
         call add(l:python_linters, 'bandit')
     endif
