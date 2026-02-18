@@ -136,6 +136,7 @@ function! ale#detect#python#detectAll(buffer) abort
         call add(l:python_linters, 'flake8')
     endif
 
+    " https://mypy.readthedocs.io/en/stable/config_file.html#using-a-pyproject-toml-file
     if has_key(l:dependencies, 'mypy')
     \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*mypy\s*\]'
     \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\[\s*tool\s*\.\s*mypy\s*\.'
@@ -197,6 +198,7 @@ function! ale#detect#python#detectAll(buffer) abort
     " python-language-server always applicable
     call add(l:python_linters, 'pyls')
 
+    " https://pyre-check.org/docs/configuration/
     if has_key(l:dependencies, 'pyre-check')
     \ || findfile('.pyre_configuration', l:bufpath) isnot# ''
         call add(l:python_linters, 'pyre')
