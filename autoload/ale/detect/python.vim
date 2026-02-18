@@ -202,6 +202,13 @@ function! ale#detect#python#detectAll(buffer) abort
         call add(l:python_linters, 'pyre')
     endif
 
+    " https://pyrefly.org/en/docs/configuration/
+    if has_key(l:dependencies, 'pyrefly')
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*pyrefly\s*\]'
+    \ || findfile('pyrefly.toml', l:bufpath) isnot# ''
+        call add(l:python_linters, 'pyrefly')
+    endif
+
     " https://docs.astral.sh/ruff/configuration/
     if has_key(l:dependencies, 'ruff')
     \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*ruff\s*[\].]'
