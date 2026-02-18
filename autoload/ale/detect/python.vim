@@ -232,6 +232,13 @@ function! ale#detect#python#detectAll(buffer) abort
         call add(l:python_linters, 'ruff')
     endif
 
+    " https://unimport.hakancelik.dev/latest/tutorial/configurations/
+    if has_key(l:dependencies, 'unimport')
+    \ || l:pyproject_toml =~# '\v%(^|\n)\s*\[\s*tool\s*\.\s*unimport\s*\]'
+    \ || l:setup_cfg =~# '\v%(^|\n)\s*\[unimport\]'
+        call add(l:python_linters, 'unimport')
+    endif
+
     if has_key(l:dependencies, 'vulture')
         call add(l:python_linters, 'vulture')
     endif
